@@ -1,5 +1,4 @@
 import numpy as np
-import thermo
 from matplotlib import pyplot as plt
 
 from PyRocket.IsentropicRelations import Isentropic
@@ -7,6 +6,7 @@ from PyRocket.Output import Settings2D
 from PyRocket.PlottingFunctions import multi_plot
 from PyRocket.SectionThermalSim import HeatEquationSolver
 from PyRocket.runtime import build_runtime_context
+from PyRocket.coolant import CoolPropMixture
 
 
 def _context():
@@ -30,7 +30,7 @@ def cooling_fluid_test():
 
     for i in range(len(T_arr)):
         # calculate coolant properties at every temperature
-        coolant = thermo.Mixture(IDs=context.coolant.IDs, ws=context.coolant.ws, T=T_arr[i], P=context.coolant.P)
+        coolant = CoolPropMixture(IDs=context.coolant.IDs, ws=context.coolant.ws, T=T_arr[i], P=context.coolant.P)
         Cp[i] = coolant.Cp
         rho[i] = coolant.rho
         Pr[i] = coolant.Pr

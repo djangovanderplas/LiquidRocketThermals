@@ -4,7 +4,6 @@ from typing import Any
 import tomllib
 
 import numpy as np
-import thermo
 
 from .CEAClass import BipropCEA
 from .FilmCooling import FilmCooling
@@ -13,6 +12,7 @@ from .IsentropicRelations import Isentropic
 from .Output import Output1D, Settings2D
 from . import MaterialLib as matlib
 from . import PropLibrary as proplib
+from .coolant import CoolPropMixture
 
 
 @dataclass
@@ -144,7 +144,7 @@ def build_runtime_context(config_path: str | Path | None = None) -> SimulationCo
     gas = Isentropic(operating_cfg["Pc"], cea.Tc, cea.gamma, cea.Pr, geometry[:, 0], geometry[:, 1])
     gas.calculate()
 
-    coolant = thermo.Mixture(
+    coolant = CoolPropMixture(
         coolant_cfg["fluid_ids"],
         ws=coolant_cfg["mass_fractions"],
         P=coolant_cfg["inlet_pressure"],
