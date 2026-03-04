@@ -190,7 +190,7 @@ terminal output for the simulation. Set 'log_TC' to True to enable the output.
 
 ### Single section takes more than 10 seconds to solve
 
-This can either be caused by the solver not reaching a steady state solution or the time step being set too small. Abort the simulation and try again with a different adaptive time step configuration. The function 'adaptive_time_step' in 'SectionThermalSim.py' is responsible for setting the time step based on the previous solution. For better convergence behaviour reduce the value of 'step_up' in the 'adaptive_time_step' function (default is 1.2). 
+This can either be caused by the solver not reaching a steady state solution or the time step being set too small. Abort the simulation and try again with a different adaptive time step configuration. The function 'adaptive_time_step' in 'SectionThermalSim.py' is responsible for setting the time step based on the previous solution. For better convergence behaviour reduce the value of 'step_up' in the 'adaptive_time_step' function (default is 1.2). If sections stall with many tiny time-step updates, increase the solver setting 'adaptive_recover' in config.toml slightly above 1.0 (for example 1.02-1.08) so the time step can recover after a down-step. 
 
 ### Fluid propery returned as 'None' type
 

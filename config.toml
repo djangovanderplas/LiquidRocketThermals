@@ -50,6 +50,7 @@ start_idx = -1
 [solver]
 cell_size_factor = 0.35
 adaptive_up = 1.4
+adaptive_recover = 1.05
 tolerance = 0.01
 max_iter = 300
 save_fig = true

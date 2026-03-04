@@ -132,6 +132,7 @@ def build_runtime_context(config_path: str | Path | None = None) -> SimulationCo
         solver_cfg["run_time"],
         cooling_cfg["start_idx"],
         solver_cfg["adaptive_up"],
+        solver_cfg.get("adaptive_recover", 1.05),
         thermocouple_cfg["log"],
         cooling_geom.thermocouples,
     )
