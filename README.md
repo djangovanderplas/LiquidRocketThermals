@@ -44,7 +44,7 @@ Unit tests are located under `tests/unit/` and can be run directly, e.g.:
 ## Using PyRocket
 PyRocket is designed to be used with nearly arbitrary combinations of propellants, cooling fluids and chamber materials. All inputs are changed in config.toml 
 New propellants can be set in PropLib.py, with new matierals added in MaterialLib.py. The selected coolant must be a fluid present in 
-[thermo](https://thermo.readthedocs.io/). A debug mode can be set in config.toml to examine the results of the 2D transient simulation to verfiy the chosen mesh and time 
+[CoolProp](https://coolprop.org/). A debug mode can be set in config.toml to examine the results of the 2D transient simulation to verfiy the chosen mesh and time 
 step settings. Run the full simulation by executing 'run.py' in your terminal window. 
 
 ```bash
@@ -192,12 +192,11 @@ terminal output for the simulation. Set 'log_TC' to True to enable the output.
 
 This can either be caused by the solver not reaching a steady state solution or the time step being set too small. Abort the simulation and try again with a different adaptive time step configuration. The function 'adaptive_time_step' in 'SectionThermalSim.py' is responsible for setting the time step based on the previous solution. For better convergence behaviour reduce the value of 'step_up' in the 'adaptive_time_step' function (default is 1.2). 
 
-### Fluid propery returned as 'None' type
+### Fluid property limitations
 
-The library [thermo](https://thermo.readthedocs.io/) does not produce reliable results for Prandtl Number, Cp or viscosity near the supercritical region, 
-especially for mixtures. The error will occur in the function 'heat_transfer_coeff_coolant' in the file 'RegenCooling.py'. If this issue occurs, use a 
-simplified single componant fluid as coolant. You can also write your own coolant class based on the outputs of the thermo Mixture object and replace the
-standard implementation. For this changes need to be made in 'RegenCooling.py' and 'config.toml'
+Coolant properties are evaluated with [CoolProp](https://coolprop.org/), which is generally more reliable near critical conditions and for many mixtures.
+If you encounter unsupported-fluid or convergence limitations, simplify the coolant composition or implement a custom coolant wrapper in `PyRocket/coolant.py`
+and reference it from `RegenCooling.py` / `runtime.py`.
 
 
     

@@ -9,10 +9,10 @@
 #####################################################################
 
 import numpy as np
-import thermo
 import scipy.optimize 
 
 from .SectionThermalSim import HeatEquationSolver
+from .coolant import CoolPropMixture
 
 
 
@@ -155,7 +155,7 @@ class HeatTransfer():
 		# temperature approximation in the near wall fluid film using a logarithmic mean for log temperature profile
         def get_near_wall_fluid():
             T_avg = (T_wall_coolant - self.coolant.T) / np.log(T_wall_coolant / self.coolant.T)
-            fluid = thermo.Mixture(IDs=self.coolant.IDs, ws=self.coolant.ws, T=T_avg, P=self.coolant.P)
+            fluid = CoolPropMixture(IDs=self.coolant.IDs, ws=self.coolant.ws, T=T_avg, P=self.coolant.P)
             return fluid
 
 		# thermodynamic properties of the near wall fluid, Pr implementation of thermo does not work reliably for mixtures near their critical point. Uses gaseouse Pr if liquid Pr returns 'None'
@@ -237,7 +237,7 @@ class HeatTransfer():
         dp, _          = self.pressure_drop(idx)
         
         # recalcualte cooling fluid properties, such as density, Pr, Cp etc. 
-        self.coolant   = thermo.Mixture(IDs=self.coolant.IDs, ws=self.coolant.ws, T=(self.coolant.T+dT), P=(self.coolant.P-dp))
+        self.coolant   = CoolPropMixture(IDs=self.coolant.IDs, ws=self.coolant.ws, T=(self.coolant.T+dT), P=(self.coolant.P-dp))
         
         
     def run(self):
