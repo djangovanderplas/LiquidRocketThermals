@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyrocket"
+version = "1.0.0"
+description = "Thermal simulation tooling for regeneratively cooled rocket chambers."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy",
+  "scipy",
+  "thermo",
+  "matplotlib",
+  "fipy",
+  "rocketcea",
+  "gmsh",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8",
+]
+
+[project.scripts]
+pyrocket-run = "PyRocket.app:run_simulation"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["PyRocket*"]

@@ -1,0 +1,62 @@
+[paths]
+output_dir = "outputs/SectionImages"
+contour_csv = "data/Contour.csv"
+
+[operating]
+fuel = "ethanol90"
+oxidizer = "N2O"
+hot_gas_method = "cinjarev"
+cooling_method = "gnielinski"
+eta_c_star = 0.85
+mixture_ratio = 2.1
+m_dot = 0.307
+Pc = 3400000.0
+ambient_temp = 288.15
+
+[coolant]
+fluid_ids = ["C2H5OH", "H2O"]
+mass_fractions = [1.0, 0.0]
+m_dot_coolant_ratio_to_fuel = 1.0
+inlet_temp = 288.0
+inlet_pressure = 5000000.0
+
+[film_cooling]
+m_dot_ratio = 0.05
+injection_velocity = 10.0
+injector_diameter = 0.0004
+
+[chamber_geometry]
+D_c = 0.05
+D_t = 0.0125
+D_e = 0.02756
+L_cyl = 0.05
+r_1 = 0.05
+r_2 = 0.005
+r_n = 0.0025
+phi_conv = 30.0
+phi_div = 24.0
+phi_e = 15.0
+step_size = 0.0025
+material = "AlSi10Mg"
+
+[cooling_geometry]
+n_channels = 20
+h_c = 0.001
+psi = 0.6
+t_w_i = 0.001
+t_w_o = 0.0012
+start_idx = -1
+
+[solver]
+cell_size_factor = 0.35
+adaptive_up = 1.4
+tolerance = 0.01
+max_iter = 300
+save_fig = true
+print_result = true
+run_time = "steady_state"
+
+[thermocouples]
+log = false
+x = [0.01, 0.02, 0.03]
+r = [0.036, 0.036, 0.036]
