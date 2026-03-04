@@ -13,11 +13,12 @@ import thermo
 import scipy.optimize 
 
 from .SectionThermalSim import HeatEquationSolver
+from .ThermalStress import ThermalStress
 
 
 
 class HeatTransfer():
-    def __init__(self, cea, gas, geometry, material, coolant, cooling_geometry, m_dot, m_dot_coolant, T_amb, output, settings2D, model='standard-bartz', cool_model='gnielinski', eta_c_star=0.92, film=False):
+    def __init__(self, cea, gas, geometry, material, coolant, cooling_geometry, m_dot, m_dot_coolant, T_amb, output, settings2D, model='standard-bartz', cool_model='gnielinski', eta_c_star=0.92, film=False, stress_enabled=True, stress_constraint_model="hoop_restrained_axial_free", stress_include_global_restraint=True, stress_ref_temp=288.15):
         """[summary]
         Class to calculate heat tranfer coefficients and radiative heat transfer at arbitrary locations along the chamber contour.
 		These functions are passed to the 2D thermal simulation, after which the program advances to the next chamber section. Several options are 
@@ -50,6 +51,13 @@ class HeatTransfer():
         self.out = output								# output class
         self.settings2D = settings2D					# settings for 2D thermal sim
 
+        self.stress_enabled = stress_enabled
+        self.stress_solver = ThermalStress(
+            material=self.material,
+            constraint_model=stress_constraint_model,
+            include_global_restraint=stress_include_global_restraint,
+            T_ref_global=stress_ref_temp,
+        )
 
 
     def heat_trans_coeff_gas(self, T_wall, idx):
@@ -227,6 +235,32 @@ class HeatTransfer():
 
         # radiation leaving to ambient 
         self.q_rad_out = np.mean(solver.q_outer)
+
+        if self.stress_enabled:
+            boundary_temperatures = np.concatenate([
+                solver.T_boundary["ChamberWall"],
+                solver.T_boundary["CoolantBottomWall"],
+                solver.T_boundary["CoolantTopWall"],
+                solver.T_boundary["CoolantSideWall"],
+                solver.T_boundary["OuterWall"],
+            ])
+            stress = self.stress_solver.evaluate_section(
+                boundary_temperatures=boundary_temperatures,
+                T_section_mean=solver.T_cell_mean,
+                p_i=self.gas.p_s[idx],
+                p_o=self.coolant.P,
+                r_i=self.geometry[idx,1],
+                t=self.cooling_geometry.t_w_i[idx],
+            )
+            self.sigma_theta_hot = stress["sigma_theta_hot"]
+            self.sigma_z_hot = stress["sigma_z_hot"]
+            self.sigma_vm_max = stress["sigma_vm_max"]
+            self.fos_u = stress["fos_u"]
+        else:
+            self.sigma_theta_hot = np.nan
+            self.sigma_z_hot = np.nan
+            self.sigma_vm_max = np.nan
+            self.fos_u = np.nan
 		
         # ensure that FiPy output object is actually a float, multiplied by the number of channels for total area
         Q = float(solver.Q_c) * self.section_length[idx] * self.cooling_geometry.n_channels
@@ -282,6 +316,10 @@ class HeatTransfer():
             self.out.Re[idx]	    = self.Re
             self.out.T_hg[idx]	    = self.T_hg 
             self.out.v_coolant[idx] = self.v_coolant
+            self.out.sigma_theta_hot[idx] = self.sigma_theta_hot
+            self.out.sigma_z_hot[idx] = self.sigma_z_hot
+            self.out.sigma_vm_max[idx] = self.sigma_vm_max
+            self.out.fos_u[idx] = self.fos_u
 
         # write to file in output folder
         self.out.write_csv()
