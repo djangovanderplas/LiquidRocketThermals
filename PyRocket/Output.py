@@ -52,6 +52,10 @@ class Output1D:
         self.Re          = np.ndarray(len(self.geometry[:, 1]))
         self.v_coolant   = np.ndarray(len(self.geometry[:, 1]))
         self.T_hg        = np.ndarray(len(self.geometry[:, 1]))
+        self.sigma_theta_hot = np.ndarray(len(self.geometry[:, 1]))
+        self.sigma_z_hot = np.ndarray(len(self.geometry[:, 1]))
+        self.sigma_vm_max = np.ndarray(len(self.geometry[:, 1]))
+        self.fos_u = np.ndarray(len(self.geometry[:, 1]))
         self.folder_path = Path(folder_path)
 		
     def output_msg(self):
@@ -80,6 +84,10 @@ class Output1D:
                     " Re_coolant",
                     " v_coolant [m/s]",
                     " T_hg (cinjarev) [K]",
+                    " sigma_theta_hot [Pa]",
+                    " sigma_z_hot [Pa]",
+                    " sigma_vm_max [Pa]",
+                    " FoS_ultimate [-]",
                 ]
             )
 
@@ -98,5 +106,9 @@ class Output1D:
                         self.Re[i],
                         self.v_coolant[i],
                         self.T_hg[i],
+                        self.sigma_theta_hot[i],
+                        self.sigma_z_hot[i],
+                        self.sigma_vm_max[i],
+                        self.fos_u[i],
                     ]
                 )

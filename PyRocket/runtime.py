@@ -37,6 +37,10 @@ class SimulationContext:
     eta_c_star: float
     m_dot: float
     m_dot_coolant: float
+    stress_enabled: bool
+    stress_constraint_model: str
+    stress_include_global_restraint: bool
+    stress_ref_temp: float
 
 
 def _resolve_path(path_value: str, repo_root: Path) -> Path:
@@ -76,6 +80,7 @@ def build_runtime_context(config_path: str | Path | None = None) -> SimulationCo
     cooling_cfg = cfg["cooling_geometry"]
     solver_cfg = cfg["solver"]
     thermocouple_cfg = cfg["thermocouples"]
+    stress_cfg = cfg.get("stress", {})
 
     contour_csv = _resolve_path(paths_cfg["contour_csv"], repo_root)
     output_dir = _resolve_path(paths_cfg["output_dir"], repo_root)
@@ -184,4 +189,8 @@ def build_runtime_context(config_path: str | Path | None = None) -> SimulationCo
         eta_c_star=operating_cfg["eta_c_star"],
         m_dot=m_dot,
         m_dot_coolant=m_dot_coolant,
+        stress_enabled=bool(stress_cfg.get("enabled", True)),
+        stress_constraint_model=str(stress_cfg.get("constraint_model", "hoop_restrained_axial_free")),
+        stress_include_global_restraint=bool(stress_cfg.get("include_global_restraint", True)),
+        stress_ref_temp=float(stress_cfg.get("reference_temp", operating_cfg["ambient_temp"])),
     )

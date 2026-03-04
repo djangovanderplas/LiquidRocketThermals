@@ -29,6 +29,10 @@ def run_simulation(config_path: str | Path | None = None, save_plots: bool = Tru
         cool_model=context.cooling_method,
         eta_c_star=context.eta_c_star,
         film=context.film,
+        stress_enabled=context.stress_enabled,
+        stress_constraint_model=context.stress_constraint_model,
+        stress_include_global_restraint=context.stress_include_global_restraint,
+        stress_ref_temp=context.stress_ref_temp,
     )
 
     sim.run()

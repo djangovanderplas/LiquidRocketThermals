@@ -165,7 +165,18 @@ class HeatEquationSolver():
         #self.phi = phi
         self.outer_wall_temp = max(phi.faceValue[mesh.physicalFaces["OuterWall"]])
         self.inner_wall_temp = max(phi.faceValue[mesh.physicalFaces["ChamberWall"]])
-		
+
+        # retain final temperature field summaries for stress post-processing
+        self.T_cell = np.asarray(phi.value, dtype=float)
+        self.T_cell_mean = float(np.mean(self.T_cell))
+        self.T_boundary = {
+            "ChamberWall": np.asarray(phi.faceValue[mesh.physicalFaces["ChamberWall"]], dtype=float),
+            "OuterWall": np.asarray(phi.faceValue[mesh.physicalFaces["OuterWall"]], dtype=float),
+            "CoolantTopWall": np.asarray(phi.faceValue[mesh.physicalFaces["CoolantTopWall"]], dtype=float),
+            "CoolantSideWall": np.asarray(phi.faceValue[mesh.physicalFaces["CoolantSideWall"]], dtype=float),
+            "CoolantBottomWall": np.asarray(phi.faceValue[mesh.physicalFaces["CoolantBottomWall"]], dtype=float),
+        }
+
 		# boundary fluxes along normal vectors
         dT_dn_c_top    = np.sqrt(phi.faceGrad[0][mesh.physicalFaces["CoolantTopWall"]]**2 + phi.faceGrad[1][mesh.physicalFaces["CoolantTopWall"]]**2)
         dT_dn_c_bottom = np.sqrt(phi.faceGrad[0][mesh.physicalFaces["CoolantBottomWall"]]**2 + phi.faceGrad[1][mesh.physicalFaces["CoolantBottomWall"]]**2)

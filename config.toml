@@ -60,3 +60,9 @@ run_time = "steady_state"
 log = false
 x = [0.01, 0.02, 0.03]
 r = [0.036, 0.036, 0.036]
+
+[stress]
+enabled = true
+constraint_model = "hoop_restrained_axial_free"
+include_global_restraint = true
+reference_temp = 288.15
