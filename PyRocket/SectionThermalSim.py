@@ -96,9 +96,10 @@ class HeatEquationSolver():
 
         if delta_T < 0:
             self.time_step /= step_down
-    
+
         elif delta_T < min_val:
-            self.time_step *= 1.0
+            # If the previous step reduced dt heavily, allow a gentle recovery.
+            self.time_step *= self.settings.adaptive_recover
 
         elif delta_T < low_val:
             self.time_step *= self.settings.adaptive_up

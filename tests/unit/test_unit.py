@@ -78,6 +78,48 @@ def isentropic_relations_test():
     multi_plot(context.geometry[:, 0], gas.M, gas.T_s, gas.p_s/1e5, gas.T_aw, 'M', 'T_s [K]', 'p_s [bar]', 'T_aw [K]')
 
 
+
+def adaptive_time_step_recovery_test():
+    settings = Settings2D(
+        cell_size=2e-4,
+        time_step=2e-4,
+        tolerance=1e-3,
+        max_iter=100,
+        save_fig=False,
+        print_result=False,
+        run_time='steady_state',
+        adaptive_up=1.4,
+        adaptive_recover=1.05,
+    )
+
+    context = _context()
+
+    def halpha_func(T, idx):
+        return 1600, 2400
+
+    def halpha_c_func(T, idx):
+        return 1113
+
+    solver = HeatEquationSolver(
+        1,
+        context.gas,
+        context.material,
+        context.cooling_geom,
+        halpha_func,
+        halpha_c_func,
+        0,
+        288,
+        288,
+        path=context.repo_root / 'outputs' / 'TestSectionThermalSim',
+        settings=settings,
+    )
+
+    solver.time_step = 1e-6
+    solver.adaptive_time_step([300.0, 300.0])
+
+    assert solver.time_step > 1e-6
+
+
 def section_thermal_sim_test():
     context = _context()
 
@@ -120,4 +162,5 @@ if __name__ == "__main__":
     cooling_fluid_test()
     material_property_test()
     isentropic_relations_test()
+    adaptive_time_step_recovery_test()
     section_thermal_sim_test()
